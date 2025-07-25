@@ -1,37 +1,73 @@
-# 🧠 Adobe Hackathon: Outline Extractor (R1A) & Persona Section Retriever (R1B)
+# 📄 Adobe India Hackathon 2024 - PDF Analysis Solution
 
-## What this does
-- **Round 1A:** Extracts Title + H1/H2/H3 headings from PDFs and writes `*.json` into `/app/output`.
-- **Round 1B:** When `/app/input/queries.json` is present, ranks the most relevant sections across PDFs for a given persona & job-to-be-done and writes `challenge1b_output.json`.
+**Team: Placeholder from ABV-IIITM**
+- Manas Gupta
+- Pranav Jarande  
+- Ayush Sah
 
-## Run (matches judge flow)
-Build:
+## 🎯 Challenge Overview
+Advanced PDF processing system that extracts structured outlines and performs persona-based semantic analysis for document collections.
+
+## 🔧 What it does
+- **Round 1A:** Intelligent PDF outline extraction (Title + H1/H2/H3 headings) with smart font analysis
+- **Round 1B:** Persona-driven semantic ranking of document sections for specific use cases
+
+## 🚀 Quick Start
+
+### Docker Deployment (Production)
 ```bash
+# Build
 docker build --platform linux/amd64 -t outline_extractor:local .
-```
-Run:
-```bash
+
+# Run
 docker run --rm -v $(pwd)/input:/app/input -v $(pwd)/output:/app/output --network none outline_extractor:local
 ```
 
-## Input formats
-- **R1A:** Put PDFs (≤50 pages) into `/app/input`. Example: `sample.pdf` → outputs `sample.json`.
-- **R1B:** Add `/app/input/queries.json` like:
-```json
-{
-  "persona": "PhD Researcher in Computational Biology",
-  "job": "Prepare a literature review on GNNs for drug discovery (methods, datasets, benchmarks).",
-  "top_k": 10,
-  "documents": ["sample1.pdf", "sample2.pdf"]  // optional; defaults to all PDFs in /app/input
-}
+### Local Development
+```bash
+pip install -r requirements.txt
+python main.py
 ```
 
-## Constraints compliance
-- **Offline:** All network is disabled at runtime. The sentence-transformers model is pre-bundled during image build.
-- **CPU-only:** Uses CPU. No GPU libs.
-- **Model size:** R1A uses no model. R1B uses `all-MiniLM-L6-v2` (~80MB) << 1GB.
-- **Performance:** R1A uses fast PyMuPDF layout; R1B caps section text and uses small embeddings.
+## 📁 Input/Output Format
 
-## Notes
-- Heading detection does **not** rely solely on font-size. It blends size, bold/uppercase ratio, and numbering patterns to classify H1/H2/H3.
-- The code is modular to be reused in R1B.
+### Round 1A
+- **Input:** PDFs (≤50 pages) in `/app/input/`
+- **Output:** JSON files with extracted headings in `/app/output/`
+
+### Round 1B  
+- **Input:** Add `/app/input/queries.json`:
+```json
+{
+  "persona": "Travel Planner",
+  "job": "Plan a 4-day trip for 10 college friends",
+  "top_k": 10,
+  "documents": ["guide1.pdf", "guide2.pdf"]
+}
+```
+- **Output:** `challenge1b_output.json` with ranked sections
+
+## ⚡ Performance Features
+- **Optimized batch processing** (64-item batches)
+- **Smart text truncation** (3K character caps)
+- **Pre-compiled regex patterns** for faster analysis  
+- **Memory-efficient processing** for large document sets
+- **Offline model deployment** with sentence-transformers
+
+## 🏗️ Architecture
+- **PDF Parser:** PyMuPDF-based text extraction with layout analysis
+- **Heading Detection:** Multi-factor scoring (font size, bold, uppercase, numbering)
+- **Semantic Ranking:** MiniLM embeddings with cosine similarity
+- **Containerized Deployment:** Docker with offline model bundling
+
+## 📊 Test Collections
+Includes comprehensive test datasets:
+- **Travel Planning:** 7 South of France guides
+- **Adobe Tutorials:** 15 Acrobat learning materials  
+- **Recipe Collection:** 9 cooking guides
+
+## 🔒 Compliance
+- ✅ **Offline Operation:** No network access during runtime
+- ✅ **CPU-Only:** No GPU dependencies  
+- ✅ **Model Size:** <100MB (well under 1GB limit)
+- ✅ **Performance Optimized:** Fast processing with smart caching

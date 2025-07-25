@@ -10,7 +10,11 @@ def extract_text_blocks(pdf_path: str) -> List[Dict[str, Any]]:
           'y0': float, 'y1': float, 'line_no': int
         }
     """
-    doc = fitz.open(pdf_path)
+    try:
+        doc = fitz.open(pdf_path)
+    except Exception as e:
+        print(f"Error opening PDF {pdf_path}: {e}")
+        return []
     items: List[Dict[str, Any]] = []
     for i, page in enumerate(doc):
         info = page.get_text("dict")
@@ -39,4 +43,5 @@ def extract_text_blocks(pdf_path: str) -> List[Dict[str, Any]]:
                         "x0": x0, "y0": y0, "x1": x1, "y1": y1,
                         "line_no": line_no
                     })
+    doc.close()
     return items

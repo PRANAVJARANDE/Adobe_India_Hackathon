@@ -8,7 +8,9 @@ from round1a.heading_model import infer_headings, blocks_to_sections
 from round1b.semantic_ranker import embed_texts, cosine_sim_matrix
 
 def _list_pdfs(input_dir: str) -> List[str]:
-    return [os.path.join(input_dir, f) for f in os.listdir(input_dir) if f.lower().endswith('.pdf')]
+    if not os.path.exists(input_dir):
+        return []
+    return [os.path.join(input_dir, f) for f in os.listdir(input_dir) if f.lower().endswith('.pdf') and os.path.exists(os.path.join(input_dir, f))]
 
 def _to_sentences(text: str) -> List[str]:
     # Simple sentence split to keep dependencies minimal
@@ -40,7 +42,18 @@ def process_collection(input_dir: str, query: Dict[str, Any]) -> Dict[str, Any]:
     # Build sections from each doc
     all_sections = []
     section_meta = []
+    # Validate document paths
+    valid_docs = []
     for path in docs:
+        if isinstance(path, str) and os.path.exists(path):
+            valid_docs.append(path)
+        elif isinstance(path, str) and not os.path.isabs(path):
+            # Try relative to input_dir
+            full_path = os.path.join(input_dir, path)
+            if os.path.exists(full_path):
+                valid_docs.append(full_path)
+    
+    for path in valid_docs:
         spans = extract_text_blocks(path)
         outline = infer_headings(spans).get('outline', [])
         sections = blocks_to_sections(spans, outline)
@@ -55,7 +68,7 @@ def process_collection(input_dir: str, query: Dict[str, Any]) -> Dict[str, Any]:
     if not all_sections:
         return {
             'metadata': {
-                'input_documents': [os.path.basename(p) for p in docs],
+                'input_documents': [os.path.basename(p) for p in valid_docs],
                 'persona': persona,
                 'job_to_be_done': job,
                 'processed_at': timestamp,

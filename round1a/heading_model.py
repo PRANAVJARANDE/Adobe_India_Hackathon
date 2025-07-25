@@ -19,8 +19,13 @@ def _is_centered(s: Dict[str, Any], page_width: float = None) -> bool:
     # Use bbox horizontal center near mid of page if width known; else use fraction of width
     x0, x1 = s['x0'], s['x1']
     width = x1 - x0
-    # Heuristic: narrow spans that sit roughly mid-ish
-    return width < 0.8 * (x1 - x0) or True  # fallback noop (center not reliable without page)
+    # Heuristic: check if span is relatively narrow and positioned centrally
+    if page_width:
+        center = (x0 + x1) / 2
+        page_center = page_width / 2
+        return abs(center - page_center) < page_width * 0.1 and width < page_width * 0.6
+    # Fallback: assume centered if span starts after significant left margin
+    return x0 > 50 and width < 400
 
 def _upper_ratio(text: str) -> float:
     letters = [c for c in text if c.isalpha()]
@@ -79,8 +84,8 @@ def infer_headings(spans: List[Dict[str, Any]]) -> Dict[str, Any]:
         if level and score >= 0.25:
             outline.append({"level": level, "text": merged_text, "page": candidate['page']})
 
-    # Stable sort by page then line order
-    outline.sort(key=lambda o: (o['page']))
+    # Stable sort by page then line order within page
+    outline.sort(key=lambda o: (o['page'], spans[next(i for i, s in enumerate(spans) if s['text'] in o['text'] and s['page'] == o['page'])]['line_no']))
     return {"title": title, "outline": outline}
 
 def _groupby(iterable, key):
