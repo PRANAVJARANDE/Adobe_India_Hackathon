@@ -1,73 +1,105 @@
-# 📄 Adobe India Hackathon 2024 - PDF Analysis Solution
+# Adobe India Hackathon 2024 - PDF Analysis Solution
 
-**Team: Placeholder from ABV-IIITM**
-- Manas Gupta
-- Pranav Jarande  
+**Team Placeholder** from ABV-IIITM
 - Ayush Sah
+- Pranav Jarande  
+- Manas Gupta
 
-## 🎯 Challenge Overview
-Advanced PDF processing system that extracts structured outlines and performs persona-based semantic analysis for document collections.
+This repository contains solutions for both challenges of the Adobe India Hackathon 2024, focused on advanced PDF analysis and processing.
 
-## 🔧 What it does
-- **Round 1A:** Intelligent PDF outline extraction (Title + H1/H2/H3 headings) with smart font analysis
-- **Round 1B:** Persona-driven semantic ranking of document sections for specific use cases
+## Challenges
 
-## 🚀 Quick Start
+### [Challenge 1A: PDF Heading Extraction](./challenge1a/)
+Extracts titles and hierarchical outlines from PDF documents using advanced text analysis techniques with smart form detection and context-aware heading classification.
 
-### Docker Deployment (Production)
+### [Challenge 1B: Semantic Document Search](./challenge1b/)
+Performs semantic search across PDF document collections using embeddings and intelligent ranking algorithms for relevant content retrieval.
+
+## Repository Structure
+
+```
+├── challenge1a/          # Challenge 1A: PDF Heading Extraction
+│   ├── round1a/          # Core extraction modules
+│   ├── utils/            # Utility functions
+│   ├── Dockerfile        # Container configuration
+│   ├── main.py           # Application entry point
+│   ├── requirements.txt  # Python dependencies
+│   └── README.md         # Challenge-specific documentation
+├── challenge1b/          # Challenge 1B: Semantic Document Search
+│   ├── round1b/          # Core search modules
+│   ├── utils/            # Utility functions
+│   ├── Dockerfile        # Container configuration
+│   ├── main.py           # Application entry point
+│   ├── requirements.txt  # Python dependencies
+│   └── README.md         # Challenge-specific documentation
+└── README.md             # This file
+```
+
+## Quick Start
+
+### Challenge 1A (PDF Heading Extraction)
+
 ```bash
-# Build
-docker build --platform linux/amd64 -t outline_extractor:local .
-
-# Run
-docker run --rm -v $(pwd)/input:/app/input -v $(pwd)/output:/app/output --network none outline_extractor:local
+cd challenge1a
+docker build -t challenge1a .
+docker run -v /path/to/input:/app/input -v /path/to/output:/app/output challenge1a
 ```
 
-### Local Development
+### Challenge 1B (Semantic Document Search)
+
 ```bash
-pip install -r requirements.txt
-python main.py
+cd challenge1b
+docker build -t challenge1b .
+docker run -v /path/to/collection:/app/input -v /path/to/output:/app/output challenge1b
 ```
 
-## 📁 Input/Output Format
+## Key Features
 
-### Round 1A
-- **Input:** PDFs (≤50 pages) in `/app/input/`
-- **Output:** JSON files with extracted headings in `/app/output/`
+### Challenge 1A
+- **Smart Title Extraction** with fragmentation handling using block-level text reconstruction
+- **Form Detection** for appropriate empty outline responses (LTC forms, etc.)
+- **Context-Aware Heading Detection** with reduced font-size dependency
+- **Hierarchical Classification** using multiple text analysis signals (bold, numbering, capitalization)
 
-### Round 1B  
-- **Input:** Add `/app/input/queries.json`:
-```json
-{
-  "persona": "Travel Planner",
-  "job": "Plan a 4-day trip for 10 college friends",
-  "top_k": 10,
-  "documents": ["guide1.pdf", "guide2.pdf"]
-}
-```
-- **Output:** `challenge1b_output.json` with ranked sections
+### Challenge 1B
+- **Semantic Embeddings** for deep content understanding using sentence-transformers
+- **Multi-Document Processing** across document collections
+- **Intelligent Ranking** with relevance scoring and cosine similarity
+- **Flexible Query Support** for both jury and custom formats
 
-## ⚡ Performance Features
-- **Optimized batch processing** (64-item batches)
-- **Smart text truncation** (3K character caps)
-- **Pre-compiled regex patterns** for faster analysis  
-- **Memory-efficient processing** for large document sets
-- **Offline model deployment** with sentence-transformers
+## Technology Stack
 
-## 🏗️ Architecture
-- **PDF Parser:** PyMuPDF-based text extraction with layout analysis
-- **Heading Detection:** Multi-factor scoring (font size, bold, uppercase, numbering)
-- **Semantic Ranking:** MiniLM embeddings with cosine similarity
-- **Containerized Deployment:** Docker with offline model bundling
+- **Python 3.9+** - Core programming language
+- **PyMuPDF (fitz)** - PDF processing and text extraction
+- **sentence-transformers** - Semantic embeddings for search
+- **scikit-learn** - Machine learning utilities
+- **Docker** - Containerization for consistent deployment
 
-## 📊 Test Collections
-Includes comprehensive test datasets:
-- **Travel Planning:** 7 South of France guides
-- **Adobe Tutorials:** 15 Acrobat learning materials  
-- **Recipe Collection:** 9 cooking guides
+## Algorithm Highlights
 
-## 🔒 Compliance
-- ✅ **Offline Operation:** No network access during runtime
-- ✅ **CPU-Only:** No GPU dependencies  
-- ✅ **Model Size:** <100MB (well under 1GB limit)
-- ✅ **Performance Optimized:** Fast processing with smart caching
+### Challenge 1A Improvements
+- **Block-level text reconstruction** inspired by Kaggle solutions for better title extraction
+- **Multi-factor heading scoring** with reduced font-size dependency as per challenge guidelines
+- **Smart form detection** using LTC-specific patterns and structural analysis
+- **Context clues** including centering, capitalization, and numbering patterns
+
+### Challenge 1B Features
+- **Offline semantic search** with pre-trained models
+- **Document chunking** for better relevance matching
+- **Score normalization** for consistent ranking across queries
+- **Flexible input formats** supporting both jury and custom schemas
+
+## Performance & Compliance
+
+- ✅ **Offline Operation**: No network access during runtime
+- ✅ **CPU-Only**: No GPU dependencies  
+- ✅ **Optimized Processing**: Fast text extraction and analysis
+- ✅ **Docker Ready**: Consistent deployment across environments
+
+## Development
+
+Each challenge includes comprehensive local development instructions in their respective README files. Both solutions support environment-based configuration and include extensive testing capabilities.
+
+---
+
+*Adobe India Hackathon 2024 - Advanced PDF Analysis Solutions*
